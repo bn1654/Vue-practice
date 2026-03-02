@@ -17,20 +17,20 @@
            <img :src="image" :alt="altText"/>
        </div>
        <div class="product-info">
-           <h1>{{ product }}</h1>
-           <span v-show="onSale">On Sale!</span>
+           <h1>{{ title }}</h1>
+           <span>{{ sale }}</span>
             <p>{{ description }}</p>
             <ul>
                 <li v-for="detail in details">{{ detail }}</li>
             </ul>
             <div
                 class="color-box"
-                v-for="variant in variants"
+                v-for="(variant, index) in variants"
                 :key="variant.variantId"
                 :style="{ backgroundColor:variant.variantColor }"
-                @mouseover="updateProduct(variant.variantImage)"
-            >
-            </div>
+                @mouseover="updateProduct(index)"
+            ></div>
+
             <span v-for="size in sizes">
                 {{ size + " "}}
             </span>
