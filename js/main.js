@@ -46,7 +46,6 @@ Vue.component('product', {
             <a :href="link">More products like this</a> 
             <div class="cart">
                 <button v-on:click="addToCart" :disabled="inventory <= 0" :class="{ disabledButton: inventory <= 0 }">Add to cart</button>
-                <p>Cart({{ cart }})</p>
                 <button v-on:click="deleteFromCart">Delete from cart</button>
             </div>
             
@@ -73,7 +72,7 @@ Vue.component('product', {
                                 variantId: 2235,
                                 variantColor: 'blue',
                                 variantImage: "./assets/vmSocks-blue-onWhite.jpg",
-                                variantQuantity: 0,
+                                variantQuantity: 4,
                             }
                         ],
             sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
@@ -82,12 +81,12 @@ Vue.component('product', {
     },
     methods: {
         addToCart() {
-            this.cart += 1;
+            this.$emit('add-to-cart', this.variants[this.selectedVariant].variantId);
+            this.variants[this.selectedVariant].variantQuantity -= 1;
         },
         deleteFromCart(){
-            if(this.cart > 0){
-                this.cart -= 1;
-            }
+                this.$emit('delete-from-cart', this.variants[this.selectedVariant].variantId);
+                this.variants[this.selectedVariant].variantQuantity += 1;
         },
         updateProduct(index) {
             this.selectedVariant = index;
@@ -121,8 +120,17 @@ Vue.component('product', {
 let app = new Vue({
    el: '#app',
    data: {
-       premium: true
+       premium: true,
+       cart: []
+   },
+   methods: {
+   updateCart(id) {
+       this.cart.push(id);
+   },
+   deleteFromCart(id){
+    this.cart.pop(id);
    }
+    }
 });
 
 
