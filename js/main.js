@@ -153,10 +153,10 @@ Vue.component('product', {
        </div>
        <div class="product-info">
            <h1>{{ title }}</h1>
+           <h2 v-if="aver_rate === aver_rate">{{ aver_rate }}</h2>
+           <h2 v-else>There is no reviews yet</h2>
            <span>{{ sale }}</span>
             <p>{{ description }}</p>
-            
-            
             <div
                 class="color-box"
                 v-for="(variant, index) in variants"
@@ -243,6 +243,16 @@ Vue.component('product', {
             } else {
                 return 2.99
             }
+        },
+        aver_rate() {
+            let result = 0;
+            for(let review of this.reviews)
+        {;
+            result += review.rating;
+            console.log(result)
+        }
+
+            return +(result / this.reviews.length).toFixed(2);
         }
 
     },
