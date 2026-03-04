@@ -89,6 +89,33 @@ Vue.component('product-review', {
 
 });
 
+Vue.component('review-search', {
+   template: `
+   <form class="review-form" @submit.prevent="onSubmit">
+ <p>
+   <label for="name">Name:</label>
+   <input id="name" v-model="name" placeholder="name">
+ </p>
+ <p>
+   <input type="submit" value="Submit"> 
+ </p>
+
+</form>
+ `,
+   data() {
+       return {
+            name: null
+       }
+   },
+   methods:{
+        onSubmit() {
+            eventBus.$emit('reviewSearch', this.name);
+        }
+        }
+
+
+});
+
 Vue.component('product-tabs', {
     props: {
    reviews: {
@@ -110,7 +137,18 @@ Vue.component('product-tabs', {
          >{{ tab }}</span>
        </ul>
        <div v-show="selectedTab === 'Reviews'">
+       <review-search></review-search>
          <p v-if="!reviews.length">There are no reviews yet.</p>
+         <div v-if='searching_review'>
+         <ul>
+           <li  v-if='review.name == searching_review' v-for="review in reviews">
+           <p>{{ review.name }}</p>
+           <p>Rating: {{ review.rating }}</p>
+           <p>{{ review.review }}</p>
+           </li>
+         </ul>
+         </div>
+         <div v-else>
          <ul>
            <li v-for="review in reviews">
            <p>{{ review.name }}</p>
@@ -118,6 +156,7 @@ Vue.component('product-tabs', {
            <p>{{ review.review }}</p>
            </li>
          </ul>
+         </div>
        </div>
        <div v-show="selectedTab === 'Make a Review'">
          <product-review></product-review>
@@ -133,9 +172,17 @@ Vue.component('product-tabs', {
    data() {
        return {
            tabs: ['Reviews', 'Make a Review', 'Shipping', 'Details'],
-           selectedTab: 'Reviews' 
+           selectedTab: 'Reviews',
+           searching_review: '',
        }
-   }
+   },
+   mounted(){
+        eventBus.$on('reviewSearch', name => {
+            console.log(name)
+            this.searching_review = name;
+            console.log(this.searching_review)
+        })
+    }
 });
 
 
@@ -249,7 +296,6 @@ Vue.component('product', {
             for(let review of this.reviews)
         {;
             result += review.rating;
-            console.log(result)
         }
 
             return +(result / this.reviews.length).toFixed(2);
